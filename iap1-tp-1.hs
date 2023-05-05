@@ -81,25 +81,12 @@ usuarioDePublicacion (u, _, _) = u
 likesDePublicacion :: Publicacion -> [Usuario]
 likesDePublicacion (_, _, us) = us
 
--- Predicados/Funciones auxiliares
+-- Funciones auxiliares
 
 pertenece :: (Eq t) => t -> [t] -> Bool -- Pertenece el elemento de tipo t a la lista de elementos de tipo t
 pertenece _ [] = False
 pertenece a (x:xs) | a == x = True
                    | otherwise = pertenece a xs
-
-empiezaCon :: (Eq t) => t -> [t] -> Bool -- Comprueba si el elemento de tipo t es el primer elemento de la lista de tipo t.
-empiezaCon _ [] = False
-empiezaCon x (y:ys) = x == y
-
-ultimoElemento :: (Eq t) => [t] -> t -- Dada una lista, devuelve el último elemento.
-ultimoElemento [] = undefined
-ultimoElemento [x] = x
-ultimoElemento (x:xs) = ultimoElemento xs
-
-terminaCon :: (Eq t) => t -> [t] -> Bool -- Comprueba si el elemento de tipo t es el último elemento de la lista de tipo t.
-terminaCon _ [] = False
-terminaCon x (y:ys) = ultimoElemento(y:ys) == x
 
 sinRepetidos :: (Eq t) => [t] -> Bool -- Comprueba que una lista no tenga repetidos
 sinRepetidos [] = True
@@ -115,53 +102,9 @@ quitar x (y:ys)
 mismosElementos :: (Eq t) => [t] -> [t] -> Bool -- Comprueba que dos listas tengan los mismos elementos (sin repetidos)
 mismosElementos [] [] = True
 mismosElementos _ [] = False
-mismosElementos [] _ = False amigosDe x y
-    | if pertenece y
+mismosElementos [] _ = False
 mismosElementos (x:xs) (y:ys) | pertenece x (y:ys) = mismosElementos xs (quitar x (y:ys))
                               | otherwise = False
-                              
-usuarioValido :: Usuario -> Bool --(1, "Kevin") -- Comprueba que un usuario sea válido.
-usuarioValido a | idDeUsuario a > 0 && nombreDeUsuario a /= "" = True
-                | otherwise = False
-
-concatenarIdDeUsuarios :: [Usuario] -> [Integer] -- Concateno en una lista los ID de los usuarios.
-concatenarIdDeUsuarios [] = []
-concatenarIdDeUsuarios (x:xs) = (idDeUsuario(x):concatenarIdDeUsuarios(xs))
-
-noHayIdsRepetidos :: [Usuario] -> Bool -- Comprueba que, dada una lista de usuarios, no haya id's repetidos.
-noHayIdsRepetidos [] = True
-noHayIdsRepetidos x = sinRepetidos(concatenarIdDeUsuarios x)
-
-usuariosValidos :: [Usuario] -> Bool --[(1, "Kevin"), (2, "Angel")etc...] -- Comprueba que, dada una lista de usuarios,todos los usuarios sean válidos.
-usuariosValidos [] = False
-usuariosValidos [x] = usuarioValido x
-usuariosValidos (x:xs) | usuarioValido x && noHayIdsRepetidos (x:xs) = usuariosValidos xs
-                       | otherwise = False
-
-usuariosDeRelacionValidos :: [Usuario] -> [Relacion] -> Bool--(a,b) a = 0 = (1, "Kevin"), b = 1 = (2, "Angel")
-usuariosDeRelacionValidos [] [] = True
-usuariosDeRelacionValidos _  [] = True 
-usuariosDeRelacionValidos [] _  = False
-usuariosDeRelacionValidos (x:xs) (y:ys) = (pertenece (fst y) (x:xs) && pertenece (snd y) (x:xs) && fst y /= snd y)
-    && usuariosDeRelacionValidos (x:xs) ys
-{-Ejemplos: [(1, "Kevin"), (2, "Angel"), (3, "Sofia"), (4, "Elias")] ----> Lista de tipo Usuario Tiene 4 elementos
-            [((1,"Kevin"), (2,"Angel")), ((3, "Sofia"), (4, "Elias")), ((1, "Pepito"), (2, "Gomez"))] ---> Lista de tipo Relacion. Tiene 2 elementos-}
-
-relacionesAsimetricas :: [Relacion] -> Bool 
-relacionesAsimetricas [] = True
-relacionesAsimetricas (x:xs) | pertenece (snd x, fst x) (x:xs) = False
-                             | otherwise = relacionesAsimetricas xs
-
-noHayRelacionesRepetidas :: [Relacion] -> Bool
-noHayRelacionesRepetidas [] = True
-noHayRelacionesRepetidas [x] = True
-noHayRelacionesRepetidas (x:y:xs) | (idDeUsuario(fst x) /= idDeUsuario(fst y)) || (idDeUsuario(snd x) /= idDeUsuario(snd y)) = noHayRelacionesRepetidas (x:xs)
-                                  | otherwise = False
-
-relacionadoDirecto :: Usuario -> Usuario -> RedSocial -> Bool
-relacionadoDirecto _ _ (_, _, []) = False 
-relacionadoDirecto a b (cs, d:ds, fs) | pertenece (a,b) (d:ds) || pertenece (b,a) (d:ds) = True
-                                     | otherwise = relacionadoDirecto a b (cs, ds, fs)
 -- Ejercicios 
 
 proyectarNombres :: [Usuario] -> [String] -- Dada una lista de usuarios, devuelvo los nombres.
@@ -171,9 +114,14 @@ proyectarNombres (x:xs) = (nombreDeUsuario x:proyectarNombres xs)
 nombresDeUsuarios :: RedSocial -> [String] -- Dada una red social, devuelvo los nombres de los usuarios.
 nombresDeUsuarios x = proyectarNombres(usuarios(x))
 
--- describir qué hace la función: Dada una red social y un usuario, devuelve una lista de los amigos de ese usuario.
+usuarioDeRelacion :: Integer -> Relacion -> Usuario -- Le paso un indice y una relacion y me devuelve el usuario en ese indice en la relación.
+usuarioDeRelacion a (us1, us2) = if a == 1 then us1 else us2
+
+
+-- Dada una red social y un usuario, devuelve una lista de los amigos de ese usuario.
+
 amigosDe :: RedSocial -> Usuario -> [Usuario]
-amigosDe = undefined
+amigosDe 
 
 
 cantidadDeAmigos :: RedSocial -> Usuario -> Int
