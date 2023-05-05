@@ -2,9 +2,9 @@
 --
 -- Nombre de Grupo: KSEA_team
 -- Integrante 1: Kevin Ezequiel La Rocca, kevinlarocca2000@gmail.com, 874/23
--- Integrante 2: Angel Guillermo Reyes Vega, rvangelse@gmail.com, 252/23
+-- Integrante 2: Nombre Apellido, email, LU
 -- Integrante 3: Nombre Apellido, email, LU
--- Integrante 4: Nombre Apellido, email, LU
+-- Integrante 4: Angel Guillermo Reyes Vega, rvangelse@gmail.com, 252/23
 
 type Usuario = (Integer, String) -- (id, nombre) Ej (1, "Kevin")     [1,2] [2,1]
 type Relacion = (Usuario, Usuario) -- usuarios que se relacionan Ej ((6, "Kevin"), (2, "Angel"), ((2, "Angel"), (6, "Kevin")) Esto solo contiene UN ELEMENTO
