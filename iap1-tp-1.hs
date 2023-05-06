@@ -1,3 +1,4 @@
+
 -- Completar con los datos del grupo
 --
 -- Nombre de Grupo: KSEA_team
@@ -57,7 +58,6 @@ sinRepetidos [] = True
 sinRepetidos (x:xs) | pertenece x xs = False
                     | otherwise = sinRepetidos xs
 
---PREGUNTAR EN CLASE EL CASO [1,2,3] [1,2,3,3]
 mismosElementos :: (Eq t) => [t] -> [t] -> Bool
 mismosElementos [] [] = True
 mismosElementos _ [] = False
@@ -102,13 +102,24 @@ relacionadoDirecto _ _ (_, _, []) = False
 relacionadoDirecto a b (cs, d:ds, fs) | pertenece (a,b) (d:ds) || pertenece (b,a) (d:ds) = True
                                      | otherwise = relacionadoDirecto a b (cs, ds, fs)
 -- Ejercicios 
+--1)
+proyectarNombres :: [Usuario] -> [String] -- Dada una lista de usuarios, devuelvo los nombres.
+proyectarNombres [] = []
+proyectarNombres (x:xs) = nombreDeUsuario x:proyectarNombres xs
 
-nombresDeUsuarios :: RedSocial -> [String]
-nombresDeUsuarios = undefined
+nombresDeUsuarios :: RedSocial -> [String] -- Dada una red social, devuelvo los nombres de los usuarios.
+nombresDeUsuarios x = proyectarNombres(usuarios x)
 
--- describir qué hace la función: .....
-amigosDe :: RedSocial -> Usuario -> [Usuario]
-amigosDe = undefined
+-- 2)
+listadeUsuarios :: [Relacion] -> Usuario -> [Usuario] --Dada una lista de relaciones y un usuario, devuelve la lista de usuarios que se relacionan con ese usuario.
+listadeUsuarios [] _ = []
+listadeUsuarios (x:xs) a | a == fst x = snd x: listadeUsuarios xs a
+                         | a == snd x = fst x: listadeUsuarios xs a
+                         | otherwise = listadeUsuarios xs a
+amigosDe :: RedSocial -> Usuario -> [Usuario] --Dada una red social y un usuario, devuelve una lista de los amigos de ese usuario.
+amigosDe x y = listadeUsuarios (relaciones x) y
+
+--Ejm de Red Social: ([(1, "A"), (2, "K"), (3, "E"), (4, "S")], [((2, "K"), (1, "A")), ((2, "K"), (3,"E")), ((2, "K"), (4, "S"))], [((1, "K"), "hola", [(1, "A")])])
 
 -- describir qué hace la función: .....
 cantidadDeAmigos :: RedSocial -> Usuario -> Int
