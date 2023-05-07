@@ -42,7 +42,7 @@ publicacionS_1 = (usuarioSofia, "Soy Sofía!", [usuarioKevin])
 publicacionS_2 = (usuarioSofia, "Qué buena red!", [usuarioAngel])
 
 primeraRed = ([usuarioElias, usuarioKevin, usuarioAngel], [relacionE_K, relacionA_K], [publicacionK_2, publicacionA_1, publicacionA_2])
-segundaRed = ([usuarioKevin, usuarioSofia, usuarioElias], [relacionE_S, relacionA_S, relacionK_S], [publicacionE_1, publicacionK_1, publicacionS_1])
+segundaRed = ([usuarioKevin, usuarioSofia, usuarioElias], [relacionE_S, relacionA_S, relacionK_S], [publicacionE_1, publicacionE_2, publicacionK_1, publicacionS_1])
 
 -- Funciones basicas
 
@@ -84,6 +84,19 @@ quitar _ [] = undefined
 quitar x (y:ys)
     | x /= y = y:quitar x ys
     | otherwise = ys
+
+quitarTodos :: (Eq t) => t -> [t] -> [t] --Dado un elemento y una lista, quita todas las apariciones de ese elemento en la lista.
+quitarTodos t [] = []
+quitarTodos t x
+    | not (pertenece t x) = x
+    | otherwise = quitarTodos t (quitar t x)
+
+eliminarRepetidos :: (Eq t) => [t] -> [t] --Dada una lista, quita los repetidos.
+eliminarRepetidos [] = []
+eliminarRepetidos [x] = [x]
+eliminarRepetidos (y:ys)
+    | pertenece y ys = y:eliminarRepetidos(quitarTodos y ys)
+    | otherwise = (y:ys) 
 
 mismosElementos :: (Eq t) => [t] -> [t] -> Bool -- Comprueba que dos listas tengan los mismos elementos (sin repetidos)
 mismosElementos [] [] = True
@@ -135,9 +148,14 @@ auxUsuarioConMasAmigos rd (x:xs)
 usuarioConMasAmigos :: RedSocial -> Usuario --Dada una red social, me devuelve el usuario con más amigos.
 usuarioConMasAmigos rd = auxUsuarioConMasAmigos rd (usuarios rd)
 
--- describir qué hace la función: .....
+--5)Función que describe si EXISTE algún elemento dentro de la lista de Usuarios tal que tenga mas de un millón de amigos.
 estaRobertoCarlos :: RedSocial -> Bool
-estaRobertoCarlos = undefined
+estaRobertoCarlos rd = chequearCantidadAmigos rd (usuarios rd)
+
+chequearCantidadAmigos :: RedSocial -> [Usuario] -> Bool --Dada una red social y una lista de usuarios, devuelve True si y solo si, al menos un usuario tiene más de un millón de amigos.   
+chequearCantidadAmigos _ [] = False 
+chequearCantidadAmigos rd (x:xs) | (cantidadDeAmigos rd x) > 1000000 = True 
+                                | otherwise = chequearCantidadAmigos rd xs
 
 -- describir qué hace la función: .....
 listaDePublicaciones :: [Publicacion] -> Usuario -> [Publicacion] --Dada una lista de publicaciones y un usuario, devuelve la lista de publicaciones de ese usuario.
@@ -156,10 +174,26 @@ publicacionesQueLeGustanA = undefined
 lesGustanLasMismasPublicaciones :: RedSocial -> Usuario -> Usuario -> Bool
 lesGustanLasMismasPublicaciones = undefined
 
+-- Dada una red social y un usuario, devuelve True si hay un usuario que le dio like a todas las publicaciones del usuario de entrada.
+concatenarLikesDePublicacion :: [Publicacion] -> [Usuario]
+concatenarLikesDePublicacion [] = []
+concatenarLikesDePublicacion (x:xs) = (eliminarRepetidos(likesDePublicacion x))++ concatenarLikesDePublicacion xs
+
+primeraPublicacionDe :: RedSocial -> Usuario -> Publicacion
+primeraPublicacionDe rd us = head(publicacionesDe rd us)
+
+cantPublicacionesDe :: RedSocial -> Usuario -> Int -- Dado un usuario, me devuelve su cant de publicaciones en la red dada.
+cantPublicacionesDe rd us = longitud(publicacionesDe rd us)
+
+cantApariciones :: (Eq t) => t -> [t] -> Int -- Dado un elemento y una lista, compruebo cuantas veces aparece ese elemento en la lista.
+cantApariciones _ [] = 0
+cantApariciones x (y:ys)
+    | x == y = 1 + cantApariciones x ys
+    | otherwise = cantApariciones x ys
 -- describir qué hace la función: .....
 tieneUnSeguidorFiel :: RedSocial -> Usuario -> Bool
-tieneUnSeguidorFiel = undefined
-
--- describir qué hace la función: .....
+tieneUnSeguidorFiel rd us
+    | cantApariciones (head(likesDePublicacion(primeraPublicacionDe rd us))) (concatenarLikesDePublicacion (publicacionesDe rd us)) == cantPublicacionesDe rd us = True
+    | otherwise = False
 existeSecuenciaDeAmigos :: RedSocial -> Usuario -> Usuario -> Bool
 existeSecuenciaDeAmigos = undefined
