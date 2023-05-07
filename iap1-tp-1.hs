@@ -6,57 +6,43 @@
 -- Integrante 3: Nombre Apellido, email, LU
 -- Integrante 4: Nombre Apellido, email, LU
 
--- Ejemplos
-
-usuario1 = (1, "Juan")
-usuario2 = (2, "Natalia")
-usuario3 = (3, "Pedro")
-usuario4 = (4, "Mariela")
-usuario5 = (5, "Natalia")
-
-relacion1_2 = (usuario1, usuario2)
-relacion1_3 = (usuario1, usuario3)
-relacion1_4 = (usuario4, usuario1) -- Notar que el orden en el que aparecen los usuarios es indistinto
-relacion2_3 = (usuario3, usuario2)
-relacion2_4 = (usuario2, usuario4)
-relacion3_4 = (usuario4, usuario3)
-
-publicacion1_1 = (usuario1, "Este es mi primer post", [usuario2, usuario4])
-publicacion1_2 = (usuario1, "Este es mi segundo post", [usuario4])
-publicacion1_3 = (usuario1, "Este es mi tercer post", [usuario2, usuario5])
-publicacion1_4 = (usuario1, "Este es mi cuarto post", [])
-publicacion1_5 = (usuario1, "Este es como mi quinto post", [usuario5])
-
-publicacion2_1 = (usuario2, "Hello World", [usuario4])
-publicacion2_2 = (usuario2, "Good Bye World", [usuario1, usuario4])
-
-publicacion3_1 = (usuario3, "Lorem Ipsum", [])
-publicacion3_2 = (usuario3, "dolor sit amet", [usuario2])
-publicacion3_3 = (usuario3, "consectetur adipiscing elit", [usuario2, usuario5])
-
-publicacion4_1 = (usuario4, "I am Alice. Not", [usuario1, usuario2])
-publicacion4_2 = (usuario4, "I am Bob", [])
-publicacion4_3 = (usuario4, "Just kidding, i am Mariela", [usuario1, usuario3])
-
-
-usuariosA = [usuario1, usuario2, usuario3, usuario4]
-relacionesA = [relacion1_2, relacion1_4, relacion2_3, relacion2_4, relacion3_4]
-publicacionesA = [publicacion1_1, publicacion1_2, publicacion2_1, publicacion2_2, publicacion3_1, publicacion3_2, publicacion4_1, publicacion4_2]
-redA = (usuariosA, relacionesA, publicacionesA)
-
-usuariosB = [usuario1, usuario2, usuario3, usuario5]
-relacionesB = [relacion1_2, relacion2_3]
-publicacionesB = [publicacion1_3, publicacion1_4, publicacion1_5, publicacion3_1, publicacion3_2, publicacion3_3]
-redB = (usuariosB, relacionesB, publicacionesB)
-
-
-
 type Usuario = (Integer, String) -- (id, nombre) Ej (1, "Kevin")     [1,2] [2,1]
 type Relacion = (Usuario, Usuario) -- usuarios que se relacionan Ej ((6, "Kevin"), (2, "Angel"), ((2, "Angel"), (6, "Kevin")) Esto solo contiene UN ELEMENTO
 type Publicacion = (Usuario, String, [Usuario]) -- (usuario que publica, texto publicacion, likes)
 -- ((1, "Kevin"), "Casa", [(2, "Angel"), (3, "Sofia")])
 type RedSocial = ([Usuario], [Relacion], [Publicacion])
 -- ([(1, "Kevin"), (2, "Angel"), (3, "Sofia")], [])
+
+--Ejemplos:
+usuarioElias = (1, "Elias")
+usuarioAngel = (2, "Angel")
+usuarioKevin = (3, "Kevin")
+usuarioSofia = (4, "Sofia")
+
+usuariosRedA = [usuarioElias, usuarioAngel]
+usuariosRedB = [usuarioKevin, usuarioSofia]
+
+relacionE_A = (usuarioElias, usuarioAngel)
+relacionE_K = (usuarioElias, usuarioKevin)
+relacionE_S = (usuarioElias, usuarioSofia)
+relacionA_K = (usuarioAngel, usuarioKevin)
+relacionA_S = (usuarioAngel, usuarioSofia)
+relacionK_S = (usuarioKevin, usuarioSofia)
+
+relacionesRedA = [relacionE_A, relacionA_K, relacionK_S]
+relacionesRedB = [relacionE_K, relacionE_S, relacionA_S]
+
+publicacionE_1 = (usuarioElias, "Mi primera publicación.", [usuarioSofia, usuarioKevin])
+publicacionE_2 = (usuarioElias, "Hola!", [usuarioSofia, usuarioAngel])
+publicacionK_1 = (usuarioKevin, "Esta es la primera publicación!", [usuarioElias, usuarioSofia])
+publicacionK_2 = (usuarioKevin, "Mi segunda publicación", [usuarioAngel])
+publicacionA_1 = (usuarioAngel, "Soy Ángel y esta es mi primer publicación!", [usuarioKevin, usuarioElias])
+publicacionA_2 = (usuarioAngel, "Hoooolaaaa, publicación n°2!", [])
+publicacionS_1 = (usuarioSofia, "Soy Sofía!", [usuarioKevin])
+publicacionS_2 = (usuarioSofia, "Qué buena red!", [usuarioAngel])
+
+primeraRed = ([usuarioElias, usuarioKevin, usuarioAngel], [relacionE_K, relacionA_K], [publicacionK_2, publicacionA_1, publicacionA_2])
+segundaRed = ([usuarioKevin, usuarioSofia, usuarioElias], [relacionE_S, relacionE_K, relacionK_S], [publicacionE_1, publicacionK_1, publicacionS_1])
 
 -- Funciones basicas
 
@@ -105,8 +91,9 @@ mismosElementos _ [] = False
 mismosElementos [] _ = False
 mismosElementos (x:xs) (y:ys) | pertenece x (y:ys) = mismosElementos xs (quitar x (y:ys))
                               | otherwise = False
--- Ejercicios 
+-- Ejercicios
 
+--1)
 proyectarNombres :: [Usuario] -> [String] -- Dada una lista de usuarios, devuelvo los nombres.
 proyectarNombres [] = []
 proyectarNombres (x:xs) = (nombreDeUsuario x:proyectarNombres xs)
@@ -114,20 +101,26 @@ proyectarNombres (x:xs) = (nombreDeUsuario x:proyectarNombres xs)
 nombresDeUsuarios :: RedSocial -> [String] -- Dada una red social, devuelvo los nombres de los usuarios.
 nombresDeUsuarios x = proyectarNombres(usuarios(x))
 
-usuarioDeRelacion :: Integer -> Relacion -> Usuario -- Le paso un indice y una relacion y me devuelve el usuario en ese indice en la relación.
-usuarioDeRelacion a (us1, us2) = if a == 1 then us1 else us2
+--2)
+listaDeUsuarios :: [Relacion] -> Usuario -> [Usuario] --Dada una lista De relaciones y un usuario, Devuelve la lista De usuarios que se relacionan con ese usuario.
+listaDeUsuarios [] _ = []
+listaDeUsuarios (x:xs) a | a == fst x = snd x: listaDeUsuarios xs a
+                         | a == snd x = fst x: listaDeUsuarios xs a
+                         | otherwise = listaDeUsuarios xs a
+amigosDe :: RedSocial -> Usuario -> [Usuario] --Dada una red social y un usuario, devuelve una lista de los amigos de ese usuario.
+amigosDe x y = listaDeUsuarios (relaciones x) y
 
+--3)
 
--- Dada una red social y un usuario, devuelve una lista de los amigos de ese usuario.
+longitud :: [t] -> Int --Dada una lista, me devuelve cuántos elementos tiene.
+longitud [] = 0
+longitud (x:xs) = (longitud xs) + 1
 
-amigosDe :: RedSocial -> Usuario -> [Usuario]
-amigosDe 
+cantidadDeAmigos :: RedSocial -> Usuario -> Int --Dada una red social y un usuario, nos devuelve cuántos amigos tiene ese usuario en esa red.
+cantidadDeAmigos rd us = longitud(amigosDe rd us)
 
-
-cantidadDeAmigos :: RedSocial -> Usuario -> Int
-cantidadDeAmigos = undefined
-
--- describir qué hace la función: .....
+--4)
+--Dada una red social, me devuelve el usuario con más amigos.
 usuarioConMasAmigos :: RedSocial -> Usuario
 usuarioConMasAmigos = undefined
 
