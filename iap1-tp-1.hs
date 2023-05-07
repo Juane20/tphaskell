@@ -109,38 +109,39 @@ proyectarNombres (x:xs) = nombreDeUsuario x:proyectarNombres xs
 
 nombresDeUsuarios :: RedSocial -> [String] -- Dada una red social, devuelvo los nombres de los usuarios.
 nombresDeUsuarios x = proyectarNombres(usuarios x)
-
--- 2)
-listadeUsuarios :: [Relacion] -> Usuario -> [Usuario] --Dada una lista de relaciones y un usuario, devuelve la lista de usuarios que se relacionan con ese usuario.
-listadeUsuarios [] _ = []
-listadeUsuarios (x:xs) a | a == fst x = snd x: listadeUsuarios xs a
-                         | a == snd x = fst x: listadeUsuarios xs a
-                         | otherwise = listadeUsuarios xs a
+--2)
+listaDeUsuarios :: [Relacion] -> Usuario -> [Usuario] --Dada una lista De relaciones y un usuario, Devuelve la lista De usuarios que se relacionan con ese usuario.
+listaDeUsuarios [] _ = []
+listaDeUsuarios (x:xs) a | a == fst x = snd x: listaDeUsuarios xs a
+                         | a == snd x = fst x: listaDeUsuarios xs a
+                         | otherwise = listaDeUsuarios xs a
 amigosDe :: RedSocial -> Usuario -> [Usuario] --Dada una red social y un usuario, devuelve una lista de los amigos de ese usuario.
-amigosDe x y = listadeUsuarios (relaciones x) y
+amigosDe x y = listaDeUsuarios (relaciones x) y
+--3)
+longitud :: [t] -> Int --Dada una lista, me devuelve cuántos elementos tiene.
+longitud [] = 0
+longitud (x:xs) = (longitud xs) + 1
 
---Ejm de Red Social: ([(1, "A"), (2, "K"), (3, "E"), (4, "S")], [((2, "K"), (1, "A")), ((2, "K"), (3,"E")), ((2, "K"), (4, "S"))], [((1, "K"), "hola", [(1, "A")])])
-
--- describir qué hace la función: .....
-cantidadDeAmigos :: RedSocial -> Usuario -> Int
-cantidadDeAmigos = undefined
-
--- describir qué hace la función: .....
+cantidadDeAmigos :: RedSocial -> Usuario -> Int --Dada una red social y un usuario, nos devuelve cuántos amigos tiene ese usuario en esa red.
+cantidadDeAmigos rd us = longitud(amigosDe rd us)
+--Ejm de Red Social: ([(1, "A"), (2, "K"), (3, "E"), (4, "S")], [((2, "K"), (1, "A")), ((2, "K"), (3,"E")), ((2, "K"), (4, "S"))], [((2, "K"), "hola", [(1, "A")])])
+--4) 
 usuarioConMasAmigos :: RedSocial -> Usuario
 usuarioConMasAmigos = undefined
 
 -- describir qué hace la función: .....
 estaRobertoCarlos :: RedSocial -> Bool
-estaRobertoCarlos = undefined
-
--- describir qué hace la función: .....
-publicacionesDe :: RedSocial -> Usuario -> [Publicacion]
-publicacionesDe = undefined
-
--- describir qué hace la función: .....
+estaRobertoCarlos =undefined
+--6) 
+listadePublicaciones :: [Publicacion] -> Usuario  -> [Publicacion] --Dada una lista de Publiciones y un usuario, devuelve la lista de publicaciones de ese usuario.
+listadePublicaciones [] _ = []
+listadePublicaciones (x:xs) a | usuarioDePublicacion x  == a = x : listadePublicaciones xs  a
+                              | otherwise = listadePublicaciones xs a
+publicacionesDe :: RedSocial -> Usuario -> [Publicacion] --Dada una red social y un usuario, devuelve la lista de publicaciones de ese usuario.
+publicacionesDe rd us = listadePublicaciones (publicaciones rd) us
+--7) 
 publicacionesQueLeGustanA :: RedSocial -> Usuario -> [Publicacion]
-publicacionesQueLeGustanA = undefined
-
+publicacionesQueLeGustanA a b = undefined
 -- describir qué hace la función: .....
 lesGustanLasMismasPublicaciones :: RedSocial -> Usuario -> Usuario -> Bool
 lesGustanLasMismasPublicaciones = undefined
