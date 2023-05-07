@@ -120,8 +120,13 @@ cantidadDeAmigos :: RedSocial -> Usuario -> Int --Dada una red social y un usuar
 cantidadDeAmigos rd us = longitud(amigosDe rd us)
 
 --4)
---Dada una red social, me devuelve el usuario con más amigos.
-usuarioConMasAmigos :: RedSocial -> Usuario
+{-maximo :: [Int] -> Int -- Dada una lista, me devuelve el valor más grande de esa lista.
+maximo [x] = x
+maximo (x:xs)
+    | (maximo xs) > x = maximo xs
+    | otherwise = x-}
+
+usuarioConMasAmigos :: RedSocial -> Usuario --Dada una red social, me devuelve el usuario con más amigos.
 usuarioConMasAmigos = undefined
 
 -- describir qué hace la función: .....
@@ -129,8 +134,14 @@ estaRobertoCarlos :: RedSocial -> Bool
 estaRobertoCarlos = undefined
 
 -- describir qué hace la función: .....
-publicacionesDe :: RedSocial -> Usuario -> [Publicacion]
-publicacionesDe = undefined
+listaDePublicaciones :: [Publicacion] -> Usuario -> [Publicacion] --Dada una lista de publicaciones y un usuario, devuelve la lista de publicaciones de ese usuario.
+listaDePublicaciones [] _ = []
+listaDePublicaciones (x:xs) us 
+    | usuarioDePublicacion x == us = (x:listaDePublicaciones xs us)
+    | otherwise = listaDePublicaciones xs us
+
+publicacionesDe :: RedSocial -> Usuario -> [Publicacion] --Dada una red social y un usuario, devuelve la lista de publicaciones de ese usuario.
+publicacionesDe rd us = listaDePublicaciones (publicaciones rd) us
 
 -- describir qué hace la función: .....
 publicacionesQueLeGustanA :: RedSocial -> Usuario -> [Publicacion]
