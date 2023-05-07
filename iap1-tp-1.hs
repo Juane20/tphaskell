@@ -1,5 +1,5 @@
 -- Completar con los datos del grupo
---
+--El ejemplo de prueba 
 -- Nombre de Grupo: KSEA_team
 -- Integrante 1: Kevin Ezequiel La Rocca, kevinlarocca2000@gmail.com, 874/23
 -- Integrante 2: Nombre Apellido, email, LU
