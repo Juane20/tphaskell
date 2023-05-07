@@ -1,8 +1,7 @@
 -- Completar con los datos del grupo
---
 -- Nombre de Grupo: KSEA_team
 -- Integrante 1: Kevin Ezequiel La Rocca, kevinlarocca2000@gmail.com, 874/23
--- Integrante 2: Nombre Apellido, email, LU
+-- Integrante 2: SOfia Copaga, email, LU
 -- Integrante 3: Nombre Apellido, email, LU
 -- Integrante 4: Nombre Apellido, email, LU
 
