@@ -32,18 +32,17 @@ relacionK_S = (usuarioKevin, usuarioSofia)
 relacionesRedA = [relacionE_A, relacionA_K, relacionK_S]
 relacionesRedB = [relacionE_K, relacionE_S, relacionA_S]
 
-publicacionE_1 = (usuarioElias, "Mi primera publicación.", [usuarioSofia, usuarioKevin])
+publicacionE_1 = (usuarioElias, "Mi primera publicacion.", [usuarioSofia, usuarioKevin])
 publicacionE_2 = (usuarioElias, "Hola!", [usuarioSofia, usuarioAngel])
-publicacionK_1 = (usuarioKevin, "Esta es la primera publicación!", [usuarioElias, usuarioSofia])
-publicacionK_2 = (usuarioKevin, "Mi segunda publicación", [usuarioAngel])
-publicacionA_1 = (usuarioAngel, "Soy Ángel y esta es mi primer publicación!", [usuarioKevin, usuarioElias])
-publicacionA_2 = (usuarioAngel, "Hoooolaaaa, publicación n°2!", [])
-publicacionS_1 = (usuarioSofia, "Soy Sofía!", [usuarioKevin])
-publicacionS_2 = (usuarioSofia, "Qué buena red!", [usuarioAngel])
+publicacionK_1 = (usuarioKevin, "Esta es la primera publicacion!", [usuarioElias, usuarioSofia])
+publicacionK_2 = (usuarioKevin, "Mi segunda publicacion", [usuarioAngel])
+publicacionA_1 = (usuarioAngel, "Soy Angel y esta es mi primer publicacion!", [usuarioKevin, usuarioElias])
+publicacionA_2 = (usuarioAngel, "Hoooolaaaa, publicacion n°2!", [usuarioKevin])
+publicacionS_1 = (usuarioSofia, "Soy Sofia!", [usuarioKevin])
+publicacionS_2 = (usuarioSofia, "Que buena red!", [usuarioAngel])
 
-primeraRed = ([usuarioElias, usuarioKevin, usuarioAngel], [relacionE_K, relacionA_K], [publicacionK_2, publicacionA_1, publicacionA_2])
-segundaRed = ([usuarioKevin, usuarioSofia, usuariElias], [relacionE_S, relacionE_K, relacionK_S], [publicacionE_1, publicacionK_1, publicacionS_1])
-
+primeraRed= ([usuarioElias, usuarioKevin, usuarioAngel], [relacionE_K, relacionA_K], [publicacionK_2, publicacionS_1])
+segundaRed = ([usuarioKevin, usuarioSofia, usuarioElias], [relacionE_S, relacionE_K, relacionK_S], [publicacionE_1, publicacionK_1, publicacionS_1])
 -- Funciones basicas
 
 usuarios :: RedSocial -> [Usuario]
@@ -130,12 +129,13 @@ usuarioConMasAmigos :: RedSocial -> Usuario --Dada una red social, me devuelve e
 usuarioConMasAmigos = undefined
 --5)Función que describe si EXISTE algún elemento dentro de la lista de Usuarios tal que tenga mas de un millón de amigos.
 estaRobertoCarlos :: RedSocial -> Bool
-estaRobertoCarlos a = chequearCantidadAmigos a (usuarios a)
+estaRobertoCarlos rd = chequearCantidadAmigos rd (usuarios rd)
 
+--Chequea si algún amigo cumple con la condición de que cantidad de amigos > 1000000
 chequearCantidadAmigos :: RedSocial -> [Usuario] -> Bool
-chequearCantidadAmigos _ [] = False --Esto es por si la recursión no encuentra ningún elemento que cumpla la condición de True, no por si le pasan una lista de Usuarios vacia.
-chequearCantidadAmigos a (x:xs) | (cantidadDeAmigos a x) >1000000 = True 
-                                | otherwise = chequearCantidadAmigos a xs
+chequearCantidadAmigos _ [] = False --Si no encontramos algún elemento que cumpla la condición del True o si le pasamos una lista de usuarios vacia.
+chequearCantidadAmigos rd (u:us) | (cantidadDeAmigos rd u) >1000000 = True 
+                                | otherwise = chequearCantidadAmigos rd us
 
 -- describir qué hace la función: .....
 listaDePublicaciones :: [Publicacion] -> Usuario -> [Publicacion] --Dada una lista de publicaciones y un usuario, devuelve la lista de publicaciones de ese usuario.
@@ -146,13 +146,20 @@ listaDePublicaciones (x:xs) us
 
 publicacionesDe :: RedSocial -> Usuario -> [Publicacion] --Dada una red social y un usuario, devuelve la lista de publicaciones de ese usuario.
 publicacionesDe rd us = listaDePublicaciones (publicaciones rd) us
--- describir qué hace la función: .....
-publicacionesQueLeGustanA :: RedSocial -> Usuario -> [Publicacion]
-publicacionesQueLeGustanA = undefined
 
--- describir qué hace la función: .....
+
+publicacionesQueLeGustanA :: RedSocial -> Usuario -> [Publicacion]--Dada una red social y un usuario, nos devuelve una lista de publicaciones que 
+publicacionesQueLeGustanA rd us = chequearListaPublicaciones (publicaciones rd) us
+
+--Funcion auxiliar que por cada elemento de nuestra lista de publicación, verifica si al usuario le gusta. Si le gusta, se lo agrega a la lista que se devolverá como resultado, si no hace recursión sin agregar la publicación actual.
+chequearListaPublicaciones :: [Publicacion] -> Usuario -> [Publicacion]
+chequearListaPublicaciones [] _ = []
+chequearListaPublicaciones (x:xs) us | pertenece us (likesDePublicacion x) = x: chequearListaPublicaciones xs us
+                                     | otherwise = chequearListaPublicaciones xs us
+
+-- Dadas una red social y dos usuarios, verifica si estos usuarios les gustan las mismas publicaciones
 lesGustanLasMismasPublicaciones :: RedSocial -> Usuario -> Usuario -> Bool
-lesGustanLasMismasPublicaciones = undefined
+lesGustanLasMismasPublicaciones rd us1 us2 = publicacionesQueLeGustanA rd us1 == publicacionesQueLeGustanA rd us2 
 
 -- describir qué hace la función: .....
 tieneUnSeguidorFiel :: RedSocial -> Usuario -> Bool
