@@ -142,7 +142,6 @@ listaDePublicaciones (x:xs) us
 
 publicacionesDe :: RedSocial -> Usuario -> [Publicacion] --Dada una red social y un usuario, devuelve la lista de publicaciones de ese usuario.
 publicacionesDe rd us = listaDePublicaciones (publicaciones rd) us
-
 -- describir qué hace la función: .....
 publicacionesQueLeGustanA :: RedSocial -> Usuario -> [Publicacion]
 publicacionesQueLeGustanA = undefined
