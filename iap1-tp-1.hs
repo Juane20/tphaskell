@@ -42,7 +42,7 @@ publicacionS_1 = (usuarioSofia, "Soy Sofía!", [usuarioKevin])
 publicacionS_2 = (usuarioSofia, "Qué buena red!", [usuarioAngel])
 
 primeraRed = ([usuarioElias, usuarioKevin, usuarioAngel], [relacionE_K, relacionA_K], [publicacionK_2, publicacionA_1, publicacionA_2])
-segundaRed = ([usuarioKevin, usuarioSofia, usuarioElias], [relacionE_S, relacionE_K, relacionK_S], [publicacionE_1, publicacionK_1, publicacionS_1])
+segundaRed = ([usuarioKevin, usuarioSofia, usuariElias], [relacionE_S, relacionE_K, relacionK_S], [publicacionE_1, publicacionK_1, publicacionS_1])
 
 -- Funciones basicas
 
@@ -116,7 +116,7 @@ longitud :: [t] -> Int --Dada una lista, me devuelve cuántos elementos tiene.
 longitud [] = 0
 longitud (x:xs) = (longitud xs) + 1
 
-cantidadDeAmigos :: RedSocial -> Usuario -> Int --Dada una red social y un usuario, nos devuelve cuántos amigos tiene ese usuario en esa red.
+cantidadDeAmigos :: RedSocial -> Usuario -> Int--Dada una red social y un usuario, nos devuelve cuántos amigos tiene ese usuario en esa red.
 cantidadDeAmigos rd us = longitud(amigosDe rd us)
 
 --4)
@@ -128,10 +128,14 @@ maximo (x:xs)
 
 usuarioConMasAmigos :: RedSocial -> Usuario --Dada una red social, me devuelve el usuario con más amigos.
 usuarioConMasAmigos = undefined
-
--- describir qué hace la función: .....
+--5)Función que describe si EXISTE algún elemento dentro de la lista de Usuarios tal que tenga mas de un millón de amigos.
 estaRobertoCarlos :: RedSocial -> Bool
-estaRobertoCarlos = undefined
+estaRobertoCarlos a = chequearCantidadAmigos a (usuarios a)
+
+chequearCantidadAmigos :: RedSocial -> [Usuario] -> Bool
+chequearCantidadAmigos _ [] = False --Esto es por si la recursión no encuentra ningún elemento que cumpla la condición de True, no por si le pasan una lista de Usuarios vacia.
+chequearCantidadAmigos a (x:xs) | (cantidadDeAmigos a x) >1000000 = True 
+                                | otherwise = chequearCantidadAmigos a xs
 
 -- describir qué hace la función: .....
 listaDePublicaciones :: [Publicacion] -> Usuario -> [Publicacion] --Dada una lista de publicaciones y un usuario, devuelve la lista de publicaciones de ese usuario.
