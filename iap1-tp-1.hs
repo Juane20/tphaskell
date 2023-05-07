@@ -146,7 +146,6 @@ publicacionesDe rd us = listaDePublicaciones (publicaciones rd) us
 -- describir qué hace la función: .....
 publicacionesQueLeGustanA :: RedSocial -> Usuario -> [Publicacion]
 publicacionesQueLeGustanA = undefined
-
 -- describir qué hace la función: .....
 lesGustanLasMismasPublicaciones :: RedSocial -> Usuario -> Usuario -> Bool
 lesGustanLasMismasPublicaciones = undefined
