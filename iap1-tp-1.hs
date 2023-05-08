@@ -32,16 +32,16 @@ relacionK_S = (usuarioKevin, usuarioSofia)
 relacionesRedA = [relacionE_A, relacionA_K, relacionK_S]
 relacionesRedB = [relacionE_K, relacionE_S, relacionA_S]
 
-publicacionE_1 = (usuarioElias, "Mi primera publicación.", [usuarioSofia, usuarioKevin])
-publicacionE_2 = (usuarioElias, "Hola!", [usuarioSofia, usuarioAngel])
-publicacionK_1 = (usuarioKevin, "Esta es la primera publicación!", [usuarioElias, usuarioSofia])
-publicacionK_2 = (usuarioKevin, "Mi segunda publicación", [usuarioAngel])
-publicacionA_1 = (usuarioAngel, "Soy Ángel y esta es mi primer publicación!", [usuarioKevin, usuarioElias])
-publicacionA_2 = (usuarioAngel, "Hoooolaaaa, publicación n°2!", [])
-publicacionS_1 = (usuarioSofia, "Soy Sofía!", [usuarioKevin])
-publicacionS_2 = (usuarioSofia, "Qué buena red!", [usuarioAngel])
+publicacionE_1 = (usuarioElias, "Mi primera publicacion.", [usuarioSofia, usuarioKevin])
+publicacionE_2 = (usuarioElias, "Hola!", [usuarioKevin, usuarioAngel])
+publicacionK_1 = (usuarioKevin, "Esta es la primera publicacion!", [usuarioElias, usuarioSofia])
+publicacionK_2 = (usuarioKevin, "Mi segunda publicacion", [usuarioAngel, usuarioKevin])
+publicacionA_1 = (usuarioAngel, "Soy Angel y esta es mi primer publicacion!", [usuarioAngel, usuarioKevin, usuarioElias])
+publicacionA_2 = (usuarioAngel, "Hoooolaaaa, publicacion n°2!", [usuarioAngel, usuarioKevin])
+publicacionS_1 = (usuarioSofia, "Soy Sofia!", [usuarioKevin])
+publicacionS_2 = (usuarioSofia, "Que buena red!", [usuarioAngel])
 
-primeraRed = ([usuarioElias, usuarioKevin, usuarioAngel], [relacionE_K, relacionA_K], [publicacionK_2, publicacionA_1, publicacionA_2])
+primeraRed = ([usuarioElias, usuarioKevin, usuarioAngel], [relacionE_K, relacionA_K], [publicacionK_2, publicacionA_1, publicacionA_2, publicacionE_1])
 segundaRed = ([usuarioKevin, usuarioSofia, usuarioElias], [relacionE_S, relacionA_S, relacionK_S], [publicacionE_1, publicacionE_2, publicacionK_1, publicacionS_1])
 
 -- Funciones basicas
@@ -112,14 +112,15 @@ proyectarNombres [] = []
 proyectarNombres (x:xs) = (nombreDeUsuario x:proyectarNombres xs)
 
 nombresDeUsuarios :: RedSocial -> [String] -- Dada una red social, devuelvo los nombres de los usuarios.
-nombresDeUsuarios x = proyectarNombres(usuarios(x))
+nombresDeUsuarios rd = proyectarNombres(usuarios(rd))
 
 --2)
 listaDeUsuarios :: [Relacion] -> Usuario -> [Usuario] --Dada una lista De relaciones y un usuario, Devuelve la lista De usuarios que se relacionan con ese usuario.
 listaDeUsuarios [] _ = []
-listaDeUsuarios (x:xs) a | a == fst x = snd x: listaDeUsuarios xs a
-                         | a == snd x = fst x: listaDeUsuarios xs a
-                         | otherwise = listaDeUsuarios xs a
+listaDeUsuarios (x:xs) us 
+    | us == fst x = snd x: listaDeUsuarios xs us
+    | us == snd x = fst x: listaDeUsuarios xs us
+    | otherwise = listaDeUsuarios xs us
 amigosDe :: RedSocial -> Usuario -> [Usuario] --Dada una red social y un usuario, devuelve una lista de los amigos de ese usuario.
 amigosDe x y = listaDeUsuarios (relaciones x) y
 
@@ -154,10 +155,10 @@ estaRobertoCarlos rd = chequearCantidadAmigos rd (usuarios rd)
 
 chequearCantidadAmigos :: RedSocial -> [Usuario] -> Bool --Dada una red social y una lista de usuarios, devuelve True si y solo si, al menos un usuario tiene más de un millón de amigos.   
 chequearCantidadAmigos _ [] = False 
-chequearCantidadAmigos rd (x:xs) | (cantidadDeAmigos rd x) > 1000000 = True 
-                                | otherwise = chequearCantidadAmigos rd xs
-
--- describir qué hace la función: .....
+chequearCantidadAmigos rd (x:xs) 
+    | (cantidadDeAmigos rd x) > 1000000 = True 
+    | otherwise = chequearCantidadAmigos rd xs
+--6)
 listaDePublicaciones :: [Publicacion] -> Usuario -> [Publicacion] --Dada una lista de publicaciones y un usuario, devuelve la lista de publicaciones de ese usuario.
 listaDePublicaciones [] _ = []
 listaDePublicaciones (x:xs) us 
@@ -166,34 +167,46 @@ listaDePublicaciones (x:xs) us
 
 publicacionesDe :: RedSocial -> Usuario -> [Publicacion] --Dada una red social y un usuario, devuelve la lista de publicaciones de ese usuario.
 publicacionesDe rd us = listaDePublicaciones (publicaciones rd) us
+--7)
+--Funcion auxiliar que por cada elemento de nuestra lista de publicación, verifica si al usuario le gusta. Si le gusta, se lo agrega a la lista que se devolverá como resultado, si no hace recursión sin agregar la publicación actual.
+chequearListaPublicaciones :: [Publicacion] -> Usuario -> [Publicacion]
+chequearListaPublicaciones [] _ = []
+chequearListaPublicaciones (x:xs) us 
+    | pertenece us (likesDePublicacion x) = x:chequearListaPublicaciones xs us
+    | otherwise = chequearListaPublicaciones xs us
 
--- describir qué hace la función: .....
 publicacionesQueLeGustanA :: RedSocial -> Usuario -> [Publicacion]
-publicacionesQueLeGustanA = undefined
--- describir qué hace la función: .....
+publicacionesQueLeGustanA rd us = chequearListaPublicaciones (publicaciones rd) us
+--8)
+--Dada una red social y dos usuarios, devuelve true si a ambos usuarios les gustan las mismas publicaciones.
 lesGustanLasMismasPublicaciones :: RedSocial -> Usuario -> Usuario -> Bool
-lesGustanLasMismasPublicaciones = undefined
+lesGustanLasMismasPublicaciones rd us1 us2 = mismosElementos(publicacionesQueLeGustanA rd us1) (publicacionesQueLeGustanA rd us2)
 
 -- Dada una red social y un usuario, devuelve True si hay un usuario que le dio like a todas las publicaciones del usuario de entrada.
-concatenarLikesDePublicacion :: [Publicacion] -> [Usuario]
-concatenarLikesDePublicacion [] = []
-concatenarLikesDePublicacion (x:xs) = (eliminarRepetidos(likesDePublicacion x))++ concatenarLikesDePublicacion xs
-
-primeraPublicacionDe :: RedSocial -> Usuario -> Publicacion
-primeraPublicacionDe rd us = head(publicacionesDe rd us)
-
-cantPublicacionesDe :: RedSocial -> Usuario -> Int -- Dado un usuario, me devuelve su cant de publicaciones en la red dada.
+cantPublicacionesDe :: RedSocial -> Usuario -> Int -- Dada una red social y un usuario, me devuelve la cantidad de publicaciones de ese usuario en la red social.
 cantPublicacionesDe rd us = longitud(publicacionesDe rd us)
-
-cantApariciones :: (Eq t) => t -> [t] -> Int -- Dado un elemento y una lista, compruebo cuantas veces aparece ese elemento en la lista.
+--9)
+cantApariciones :: (Eq t) => t -> [t] -> Int --Dado un elemento y una lista, me dice cuántas veces aparece ese elemento en la lista.
 cantApariciones _ [] = 0
 cantApariciones x (y:ys)
     | x == y = 1 + cantApariciones x ys
     | otherwise = cantApariciones x ys
--- describir qué hace la función: .....
-tieneUnSeguidorFiel :: RedSocial -> Usuario -> Bool
-tieneUnSeguidorFiel rd us
-    | cantApariciones (head(likesDePublicacion(primeraPublicacionDe rd us))) (concatenarLikesDePublicacion (publicacionesDe rd us)) == cantPublicacionesDe rd us = True
-    | otherwise = False
+
+likesDeTodasLasPublicaciones :: [Publicacion] -> [Usuario] --Dada una lista de publicaciones, concatena los likes de éstas.
+likesDeTodasLasPublicaciones [] = []
+likesDeTodasLasPublicaciones (x:xs) = (eliminarRepetidos(likesDePublicacion x)++likesDeTodasLasPublicaciones xs)
+
+likesPrimeraPublicacion :: RedSocial -> Usuario -> [Usuario] --Dado un usuario, devuelve los likes de la primera publicación de éste en la red social dada.
+likesPrimeraPublicacion rd us = likesDePublicacion(head(publicacionesDe rd us))
+
+auxTieneUnSeguidorFiel :: RedSocial -> Usuario -> [Usuario] -> Bool --Auxiliar que hace recursividad sobre los likes de la primera publicación del usuario de tieneUnSeguidorFiel.
+auxTieneUnSeguidorFiel _ _ [] = False
+auxTieneUnSeguidorFiel rd us (x:xs)
+    | cantApariciones x (likesDeTodasLasPublicaciones(publicacionesDe rd us)) == cantPublicacionesDe rd us = True
+    | otherwise = auxTieneUnSeguidorFiel rd us xs
+
+tieneUnSeguidorFiel :: RedSocial -> Usuario -> Bool --Dada una red social y un usuario, evalúa si, en esa red social, hay un usuario que le dio like a todas las publicaciones del usuario dado, si es así, devuelve True.
+tieneUnSeguidorFiel rd us = auxTieneUnSeguidorFiel rd us (likesPrimeraPublicacion rd us)
+
 existeSecuenciaDeAmigos :: RedSocial -> Usuario -> Usuario -> Bool
 existeSecuenciaDeAmigos = undefined
