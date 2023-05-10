@@ -14,6 +14,8 @@ usuarioElias = (1, "Elias")
 usuarioAngel = (2, "Angel")
 usuarioKevin = (3, "Kevin")
 usuarioSofia = (4, "Sofia")
+usuarioJorge = (5, "Jorge")
+usuarioLuis =  (6, "Luis")
 
 usuariosRedA = [usuarioElias, usuarioAngel]
 usuariosRedB = [usuarioKevin, usuarioSofia]
@@ -24,6 +26,8 @@ relacionE_S = (usuarioElias, usuarioSofia)
 relacionA_K = (usuarioAngel, usuarioKevin)
 relacionA_S = (usuarioAngel, usuarioSofia)
 relacionK_S = (usuarioKevin, usuarioSofia)
+relacionK_L = (usuarioKevin, usuarioLuis)
+relacionL_J = (usuarioLuis, usuarioJorge)
 
 relacionesRedA = [relacionE_A, relacionA_K, relacionK_S]
 relacionesRedB = [relacionE_K, relacionE_S, relacionA_S]
@@ -37,8 +41,8 @@ publicacionA_2 = (usuarioAngel, "Hoooolaaaa, publicación n°2!", [])
 publicacionS_1 = (usuarioSofia, "Soy Sofía!", [usuarioKevin])
 publicacionS_2 = (usuarioSofia, "Qué buena red!", [usuarioAngel])
 
-primeraRed = ([usuarioElias, usuarioKevin, usuarioAngel, usuarioSofia], [relacionE_A, relacionA_S, relacionK_S], [publicacionK_2, publicacionA_1, publicacionA_2])
-segundaRed = ([usuarioKevin, usuarioSofia, usuarioElias, usuarioAngel], [relacionE_K, relacionK_S, relacionA_S], [publicacionE_1, publicacionK_1, publicacionS_1])
+primeraRed = ([usuarioElias, usuarioKevin, usuarioAngel, usuarioSofia, usuarioJorge, usuarioLuis], [relacionE_A, relacionA_S, relacionK_S, relacionK_L, relacionL_J], [publicacionK_2, publicacionA_1, publicacionA_2])
+segundaRed = ([usuarioKevin, usuarioSofia, usuarioElias, usuarioAngel], [relacionE_A, relacionK_S], [publicacionE_1, publicacionK_1, publicacionS_1])
 -- Funciones basicas:
 usuarios :: RedSocial -> [Usuario]
 usuarios (us, _, _) = us
@@ -179,21 +183,12 @@ tieneUnSeguidorFiel = undefined
 
 -- describir qué hace la función: .....
 existeSecuenciaDeAmigos :: RedSocial -> Usuario -> Usuario -> Bool
-existeSecuenciaDeAmigos rs us1 us2 = amigosEnComun (amigosDe rs us1) (amigosDe rs us2) || amigoDeLosamigosDeMiamigo rs (amigosAla2 rs (amigosDe rs us1))  (amigosAla2 rs (amigosDe rs us2))
+existeSecuenciaDeAmigos rs us1 us2 = findelacadena (cadenadeamigos (relaciones rs) us1) us2  
 
-amigosEnComun :: [Usuario] -> [Usuario] -> Bool
-amigosEnComun [] _ = False
-amigosEnComun (x:us1) us2 | pertenece x us2 = True 
-                          | otherwise = amigosEnComun us1 us2 
-amigosAla2 :: RedSocial -> [Usuario] -> [Usuario] --Esta funcion me da una gran lista con todos los amigos de los amigos de un usuario2 (amigos al cuadrado jaja) de un usuario 
-amigosAla2 rs [] = []
-amigosAla2 rs (x:xs) = amigosDe rs x ++ amigosAla2 rs xs 
-                     
-
-amigoDeLosamigosDeMiamigo :: RedSocial ->[Usuario]-> [Usuario] -> Bool  --Esta funcion busca si existe un amigo de los amigos de un usuario1 que es amigo de los amigos de un usuario2
-amigoDeLosamigosDeMiamigo rs [] [] = False 
-amigoDeLosamigosDeMiamigo rs _ [] = False
-amigoDeLosamigosDeMiamigo rs [] _ = False
-amigoDeLosamigosDeMiamigo rs (usx:xs) (usy:ys) | pertenece usx (amigosDe rs usy) = True
-                                               | otherwise = amigoDeLosamigosDeMiamigo rs xs ys
+cadenadeamigos :: [Relacion] -> Usuario -> [Usuario] -- Dada una lista de relaciones y un usuario, crea una cadena de amigos (Lista de Usuarios), que empieza por el amigo del amigo del us1
+cadenadeamigos [] _ = []
+cadenadeamigos (x:xs) us1 | us1 == fst x = listaDeUsuarios xs (snd x) ++ cadenadeamigos xs (snd x) 
+                          | otherwise = listaDeUsuarios xs (fst x) ++ cadenadeamigos xs (fst x)
+findelacadena :: [Usuario] -> Usuario -> Bool --Dada una cadena de Amigos, verifica que el us2 pertenezca a esta
+findelacadena a us2 = pertenece  us2 a 
                                         
