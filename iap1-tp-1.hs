@@ -6,16 +6,40 @@
 -- Integrante 2: Nombre Apellido, email, LU
 -- Integrante 3: Nombre Apellido, email, LU
 -- Integrante 4: Angel Guillermo Reyes Vega, rvangelse@gmail.com, 252/23
-
-type Usuario = (Integer, String) -- (id, nombre) Ej (1, "Kevin")     [1,2] [2,1]
-type Relacion = (Usuario, Usuario) -- usuarios que se relacionan Ej ((6, "Kevin"), (2, "Angel"), ((2, "Angel"), (6, "Kevin")) Esto solo contiene UN ELEMENTO
-type Publicacion = (Usuario, String, [Usuario]) -- (usuario que publica, texto publicacion, likes)
--- ((1, "Kevin"), "Casa", [(2, "Angel"), (3, "Sofia")])
+type Usuario = (Integer, String) 
+type Relacion = (Usuario, Usuario) 
+type Publicacion = (Usuario, String, [Usuario]) 
 type RedSocial = ([Usuario], [Relacion], [Publicacion])
--- ([(1, "Kevin"), (2, "Angel"), (3, "Sofia")], [])
--- Holaaaaaa a todos
--- Funciones basicas
+usuarioElias = (1, "Elias")
+usuarioAngel = (2, "Angel")
+usuarioKevin = (3, "Kevin")
+usuarioSofia = (4, "Sofia")
 
+usuariosRedA = [usuarioElias, usuarioAngel]
+usuariosRedB = [usuarioKevin, usuarioSofia]
+
+relacionE_A = (usuarioElias, usuarioAngel)
+relacionE_K = (usuarioElias, usuarioKevin)
+relacionE_S = (usuarioElias, usuarioSofia)
+relacionA_K = (usuarioAngel, usuarioKevin)
+relacionA_S = (usuarioAngel, usuarioSofia)
+relacionK_S = (usuarioKevin, usuarioSofia)
+
+relacionesRedA = [relacionE_A, relacionA_K, relacionK_S]
+relacionesRedB = [relacionE_K, relacionE_S, relacionA_S]
+
+publicacionE_1 = (usuarioElias, "Mi primera publicación.", [usuarioSofia, usuarioKevin])
+publicacionE_2 = (usuarioElias, "Hola!", [usuarioSofia, usuarioAngel])
+publicacionK_1 = (usuarioKevin, "Esta es la primera publicación!", [usuarioElias, usuarioSofia])
+publicacionK_2 = (usuarioKevin, "Mi segunda publicación", [usuarioAngel])
+publicacionA_1 = (usuarioAngel, "Soy Ángel y esta es mi primer publicación!", [usuarioKevin, usuarioElias])
+publicacionA_2 = (usuarioAngel, "Hoooolaaaa, publicación n°2!", [])
+publicacionS_1 = (usuarioSofia, "Soy Sofía!", [usuarioKevin])
+publicacionS_2 = (usuarioSofia, "Qué buena red!", [usuarioAngel])
+
+primeraRed = ([usuarioElias, usuarioKevin, usuarioAngel, usuarioSofia], [relacionE_A, relacionA_S, relacionK_S], [publicacionK_2, publicacionA_1, publicacionA_2])
+segundaRed = ([usuarioKevin, usuarioSofia, usuarioElias, usuarioAngel], [relacionE_K, relacionK_S, relacionA_S], [publicacionE_1, publicacionK_1, publicacionS_1])
+-- Funciones basicas:
 usuarios :: RedSocial -> [Usuario]
 usuarios (us, _, _) = us
 
@@ -140,8 +164,11 @@ listadePublicaciones (x:xs) a | usuarioDePublicacion x  == a = x : listadePublic
 publicacionesDe :: RedSocial -> Usuario -> [Publicacion] --Dada una red social y un usuario, devuelve la lista de publicaciones de ese usuario.
 publicacionesDe rd us = listadePublicaciones (publicaciones rd) us
 --7) 
-publicacionesQueLeGustanA :: RedSocial -> Usuario -> [Publicacion]
-publicacionesQueLeGustanA a b = undefined
+--likesDePublicacion :: Publicacion -> [Usuario]
+--likesDePublicacion (_, _, us) = us
+--publicacionesQueLeGustanA :: RedSocial -> Usuario -> [Publicacion]
+--publicacionesQueLeGustanA rs b = aux (publicaciones rs))
+
 -- describir qué hace la función: .....
 lesGustanLasMismasPublicaciones :: RedSocial -> Usuario -> Usuario -> Bool
 lesGustanLasMismasPublicaciones = undefined
@@ -152,4 +179,21 @@ tieneUnSeguidorFiel = undefined
 
 -- describir qué hace la función: .....
 existeSecuenciaDeAmigos :: RedSocial -> Usuario -> Usuario -> Bool
-existeSecuenciaDeAmigos = undefined
+existeSecuenciaDeAmigos rs us1 us2 = amigosEnComun (amigosDe rs us1) (amigosDe rs us2) || amigoDeLosamigosDeMiamigo rs (amigosAla2 rs (amigosDe rs us1))  (amigosAla2 rs (amigosDe rs us2))
+
+amigosEnComun :: [Usuario] -> [Usuario] -> Bool
+amigosEnComun [] _ = False
+amigosEnComun (x:us1) us2 | pertenece x us2 = True 
+                          | otherwise = amigosEnComun us1 us2 
+amigosAla2 :: RedSocial -> [Usuario] -> [Usuario] --Esta funcion me da una gran lista con todos los amigos de los amigos de un usuario2 (amigos al cuadrado jaja) de un usuario 
+amigosAla2 rs [] = []
+amigosAla2 rs (x:xs) = amigosDe rs x ++ amigosAla2 rs xs 
+                     
+
+amigoDeLosamigosDeMiamigo :: RedSocial ->[Usuario]-> [Usuario] -> Bool  --Esta funcion busca si existe un amigo de los amigos de un usuario1 que es amigo de los amigos de un usuario2
+amigoDeLosamigosDeMiamigo rs [] [] = False 
+amigoDeLosamigosDeMiamigo rs _ [] = False
+amigoDeLosamigosDeMiamigo rs [] _ = False
+amigoDeLosamigosDeMiamigo rs (usx:xs) (usy:ys) | pertenece usx (amigosDe rs usy) = True
+                                               | otherwise = amigoDeLosamigosDeMiamigo rs xs ys
+                                        
