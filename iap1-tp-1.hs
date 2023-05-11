@@ -204,34 +204,13 @@ tieneUnSeguidorFiel = undefined
 
 -- describir qué hace la función: .....
 existeSecuenciaDeAmigos :: RedSocial -> Usuario -> Usuario -> Bool
-existeSecuenciaDeAmigos rs us1 us2 = findelacadena (cadenadeamigos (relaciones rs) us1) us2  
+existeSecuenciaDeAmigos rs us1 us2 = findelacadena (cadenadeamigos (relaciones rs) us1) us2  || pertenece us1 (amigosDe rs us2)
 
 cadenadeamigos :: [Relacion] -> Usuario -> [Usuario] -- Dada una lista de relaciones y un usuario, crea una cadena de amigos (Lista de Usuarios), que empieza por el amigo del amigo del us1
 cadenadeamigos [] _ = []
 cadenadeamigos (x:xs) us1 | us1 == fst x = listaDeUsuarios xs (snd x) ++ cadenadeamigos xs (snd x) 
-                          | otherwise = listaDeUsuarios xs (fst x) ++ cadenadeamigos xs (fst x)
+                          | us1 == snd x = listaDeUsuarios xs (fst x) ++ cadenadeamigos xs (snd x)
+                          | otherwise = fst x: snd x: cadenadeamigos xs us1
 findelacadena :: [Usuario] -> Usuario -> Bool --Dada una cadena de Amigos, verifica que el us2 pertenezca a esta
 findelacadena a us2 = pertenece  us2 a 
-existeSecuenciaDeAmigos :: RedSocial -> Usuario -> Usuario -> Bool
-existeSecuenciaDeAmigos rs us1 us2 = findelacadena (cadenadeamigos (relaciones rs) us1) us2 || pertenece us1 (amigosDe rs us2) 
-
-
-cadenadeamigos :: [Relacion] -> Usuario -> [Usuario] -- Dada una lista de relaciones y un usuario, crea una cadena de amigos (Lista de Usuarios), que empieza por el amigo del amigo del us1
-cadenadeamigos [] _ = []
-cadenadeamigos (x:xs) us1 | (us1 == fst x) = listaDeUsuarios xs (snd x) ++ cadenadeamigos xs (snd x)
-                          | (us1 == snd x) = listaDeUsuarios xs (fst x) ++ cadenadeamigos xs (snd x)
-                          | otherwise = fst x: snd x:  cadenadeamigos xs us1 
-
-findelacadena :: [Usuario] -> Usuario -> Bool --Dada una cadena de Amigos, verifica que el us2 pertenezca a esta
-findelacadena a us2 = pertenece  us2 a 
-
-{-listaDeUsuarios :: [Relacion] -> Usuario -> [Usuario] --Dada una lista De relaciones y un usuario, Devuelve la lista De usuarios que se relacionan con ese usuario.
-listaDeUsuarios [] _ = []
-listaDeUsuarios (x:xs) a | a == fst x = snd x: listaDeUsuarios xs a
-                         | a == snd x = fst x: listaDeUsuarios xs a
-                         | otherwise = listaDeUsuarios xs a-}
-
--- primeraRed = ([usuarioElias, usuarioKevin, usuarioAngel, usuarioSofia, usuarioJorge, usuarioLuis], [relacionK_S, relacionE_A, relacionA_S, relacionK_L, relacionL_J], [publicacionK_2, publicacionA_1, publicacionA_2])
---segundaRed = ([usuarioKevin, usuarioSofia, usuarioElias, usuarioAngel], [relacionE_A, relacionK_S], [publicacionE_1, publicacionK_1, publicacionS_1])-}migosAla2 :: RedSocial -> [Usuario] -> [Usuario] --Esta funcion me da una gran lista con todos los amigos de los amigos de un usuario2 (amigos al cuadrado jaja) de un usuario 
-
                                         
