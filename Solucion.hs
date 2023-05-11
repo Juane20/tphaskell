@@ -1,6 +1,4 @@
 module Solucion where
--- Completar con los datos del grupo
---
 -- Nombre de Grupo: KSEA_team
 -- Integrante 1: Kevin Ezequiel La Rocca, kevinlarocca2000@gmail.com, 874/23
 -- Integrante 2: Juan Elias Cabrera, cabreraelias182@gmail.com, 501/23
@@ -115,7 +113,8 @@ cadenaDeAmigos :: [Relacion] -> Usuario -> [Usuario] -- Dada una lista de relaci
 cadenaDeAmigos [] _ = []
 cadenaDeAmigos (rel:rels) us1 
     | us1 == fst rel = listaDeUsuarios rels (snd rel) ++ cadenaDeAmigos rels (snd rel) 
-    | otherwise = listaDeUsuarios rels (fst rel) ++ cadenaDeAmigos rels (fst rel)
+    | us1 == snd rel = listaDeUsuarios rels (fst rel) ++ cadenaDeAmigos rels (snd rel)
+    | otherwise = fst rel : snd rel : cadenaDeAmigos rels us1
 
 finDeLaCadena :: [Usuario] -> Usuario -> Bool --Dada una cadena de Amigos, verifica que el us2 pertenezca a esta
 finDeLaCadena listUs us2 = pertenece us2 listUs
@@ -167,5 +166,5 @@ tieneUnSeguidorFiel :: RedSocial -> Usuario -> Bool --Dada una red social y un u
 tieneUnSeguidorFiel rd us = auxTieneUnSeguidorFiel rd us (likesPrimeraPublicacion rd us)
 --10)
 existeSecuenciaDeAmigos :: RedSocial -> Usuario -> Usuario -> Bool
-existeSecuenciaDeAmigos rd us1 us2 = finDeLaCadena (cadenaDeAmigos (relaciones rd) us1) us2
+existeSecuenciaDeAmigos rd us1 us2 = finDeLaCadena (cadenaDeAmigos (relaciones rd) us1) us2 || pertenece us1 (amigosDe rd us2)
 
