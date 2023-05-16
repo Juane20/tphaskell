@@ -152,7 +152,7 @@ redSinSeguidorFiel = (usuarios9_1, relaciones9_1, publicaciones9_2) --Red donde 
 
 --Ejercicio 10
 usuarios10_1 = [usuario3, usuario4, usuario5, usuario6, usuario7, usuario8, usuario9]
-relaciones10_1 = [relacion6_7, relacion7_8, relacion8_9, relacion9_6] --usuario 6 se relaciona con 7, 7 con 8, 8 con 9, entonces, existe una secuencia de amigos entre 6 y 9
+relaciones10_1 = [relacion6_7, relacion7_8, relacion8_9] --usuario 6 se relaciona con 7, 7 con 8, 8 con 9, entonces, existe una secuencia de amigos entre 6 y 9
 publicaciones10_1 = [publicacion10_1] --Publicación de relleno
 redConSecuencia = (usuarios10_1, relaciones10_1, publicaciones10_1) --Red donde existe una secuencia de amigos entre usuario6 y usuario9
 

@@ -39,10 +39,9 @@ proyectarNombres (x:xs) = eliminarRepetidos((nombreDeUsuario x:proyectarNombres 
 
 eliminarRepetidos :: (Eq t) => [t] -> [t] --Dada una lista, quita los repetidos.
 eliminarRepetidos [] = []
-eliminarRepetidos [x] = [x]
-eliminarRepetidos (y:ys)
-    | pertenece y ys = y:eliminarRepetidos(quitarTodos y ys)
-    | otherwise = (y:ys) 
+eliminarRepetidos (x:xs)
+    | not(pertenece x xs) = x:eliminarRepetidos xs
+    | otherwise = x:eliminarRepetidos(quitarTodos x xs) 
 --Usadas en el ejercicio 2
 listaDeUsuarios :: [Relacion] -> Usuario -> [Usuario] --Dada una lista De relaciones y un usuario, Devuelve la lista De usuarios que se relacionan con ese usuario.
 listaDeUsuarios [] _ = []
@@ -110,15 +109,6 @@ auxTieneUnSeguidorFiel rd us (x:xs)
     | cantApariciones x (likesDeTodasLasPublicaciones(publicacionesDe rd us)) == cantPublicacionesDe rd us = True
     | otherwise = auxTieneUnSeguidorFiel rd us xs
 --Usadas en el ejercicio 10 y funciones que se utilizan en varias funciones.
-cadenaDeAmigos :: [Relacion] -> Usuario -> [Usuario] -- Dada una lista de relaciones y un usuario, crea una cadena de amigos (Lista de Usuarios), que empieza por el amigo del amigo del us1
-cadenaDeAmigos [] _ = []
-cadenaDeAmigos (rel:rels) us1 
-    | us1 == fst rel = listaDeUsuarios rels (snd rel) ++ cadenaDeAmigos rels (snd rel) 
-    | us1 == snd rel = listaDeUsuarios rels (fst rel) ++ cadenaDeAmigos rels (snd rel)
-    | otherwise = fst rel : snd rel : cadenaDeAmigos rels us1
-
-finDeLaCadena :: [Usuario] -> Usuario -> Bool --Dada una cadena de Amigos, verifica que el us2 pertenezca a esta
-finDeLaCadena listUs us2 = pertenece us2 listUs
 
 pertenece :: (Eq t) => t -> [t] -> Bool -- Pertenece el elemento de tipo t a la lista de elementos de tipo t
 pertenece _ [] = False
@@ -134,9 +124,10 @@ quitar x (y:ys)
 
 quitarTodos :: (Eq t) => t -> [t] -> [t] --Dado un elemento y una lista, quita todas las apariciones de ese elemento en la lista.
 quitarTodos t [] = []
-quitarTodos t x
-    | not (pertenece t x) = x
-    | otherwise = quitarTodos t (quitar t x)
+quitarTodos t (x:xs)
+    | not (pertenece t (x:xs)) = (x:xs)
+    | t == x = quitarTodos t xs
+    | otherwise = x:quitarTodos t xs
 -- Ejercicios
 --1)
 nombresDeUsuarios :: RedSocial -> [String] -- Dada una red social, devuelvo los nombres de los usuarios.
@@ -166,8 +157,24 @@ lesGustanLasMismasPublicaciones rd us1 us2 = mismosElementos(publicacionesQueLeG
 tieneUnSeguidorFiel :: RedSocial -> Usuario -> Bool --Dada una red social y un usuario, evalúa si, en esa red social, hay un usuario que le dio like a todas las publicaciones del usuario dado, si es así, devuelve True.
 tieneUnSeguidorFiel rd us = auxTieneUnSeguidorFiel rd us (likesPrimeraPublicacion rd us)
 --10)
+seRelacionan :: RedSocial -> [Usuario] -> [Usuario] -> Bool
+seRelacionan _ [] _ = False
+seRelacionan rd (us:restUs) amigosUs2 = (pertenece us amigosUs2) || seRelacionan redSiguiente restUs amigosUs2 || seRelacionan redSiguiente amigosUs amigosUs2
+    where
+        redSiguiente = redNueva rd us
+        amigosUs = amigosDe rd us
+
+redNueva :: RedSocial -> Usuario -> RedSocial
+redNueva (users, rels, _) us = ((quitarTodos us users),(sacarRelaciones rels us), [])
+
+sacarRelaciones :: [Relacion] -> Usuario -> [Relacion]
+sacarRelaciones [] _ = []
+sacarRelaciones (rel:rels) us
+    | fst rel == us || snd rel == us = sacarRelaciones rels us
+    | otherwise = (rel:sacarRelaciones rels us)
+
 existeSecuenciaDeAmigos :: RedSocial -> Usuario -> Usuario -> Bool
-existeSecuenciaDeAmigos rd us1 us2 
-    | (cantidadDeAmigos rd us1 == 0 || cantidadDeAmigos rd us2 == 0) = False
-    | pertenece us1 (amigosDe rd (us2)) = True
-    | otherwise = finDeLaCadena (cadenaDeAmigos (relaciones rd) us1) us2
+existeSecuenciaDeAmigos rd us1 us2 = pertenece us1 amigosUs2 || seRelacionan rd amigosUs1 amigosUs2
+    where
+        amigosUs1 = amigosDe rd us1
+        amigosUs2 = amigosDe rd us2
